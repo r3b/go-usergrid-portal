@@ -1,0 +1,373 @@
+<!doctype html>
+<html lang="en" ng-app="appservices">
+<head>
+  <meta charset="utf-8">
+  <title>Apigee App Services</title>
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <meta name="description" content="">
+  <meta name="author" content="">
+
+  <link href="js/libs/bootstrap/custom/css/bootstrap.css" rel="stylesheet">
+  <link href="css/dash.min.css" rel="stylesheet">
+
+  <!--styles for jquery ui calendar component-->
+  <link rel="stylesheet" type="text/css" href="js/libs/jqueryui/jquery-ui-1.8.9.custom.css"/>
+  <link rel="stylesheet" type="text/css" href="js/libs/jqueryui/jquery-ui-timepicker.css"/>
+</head>
+<body ng-controller="PageCtrl" >
+<!-- Google Tag Manager -->
+<noscript><iframe src="//www.googletagmanager.com/ns.html?id=GTM-N52333"
+                  height="0" width="0" style="display:none;visibility:hidden"></iframe></noscript>
+<script>(function(w,d,s,l,i){w[l]=w[l]||[];w[l].push({'gtm.start':
+    new Date().getTime(),event:'gtm.js'});var f=d.getElementsByTagName(s)[0],
+    j=d.createElement(s),dl=l!='dataLayer'?'&l='+l:'';j.async=true;j.src=
+    '//www.googletagmanager.com/gtm.js?id='+i+dl;f.parentNode.insertBefore(j,f);
+})(window,document,'script','dataLayer','GTM-N52333');</script>
+<!-- End Google Tag Manager -->
+<header>
+  <nav class="navbar navbar-static-top">
+    <div class="container-fluid">
+      <button type="button" class="btn btn-navbar" data-toggle="collapse" data-target=".nav-collapse">
+        <span class="icon-bar"></span>
+        <span class="icon-bar"></span>
+        <span class="icon-bar"></span>
+      </button>
+      <a class="brand" href="#"><img src="img/logo.gif"/></a>
+
+      <div appswitcher ></div>
+
+
+      <div class="nav-collapse collapse" style="display: none" ng-show="loaded">
+
+        <div class="navbar-text pull-right" ng-if="activeUI">
+          <span class="navbar-text" id="userEmail" >{{userEmail || 'anonymous'}}</span> |
+          <span ng-controller="LoginCtrl"><a ng-click="logout()" title="logout"><i class="pictogram">&#59201</i></a></span>
+          <span ><a ng-click="profile()" title="profile"><i class="pictogram">&#59170</i></a></span> |
+          <span><a href="archive/" target="_blank">Legacy Portal</a></span>
+        </div>
+
+      </div>
+    </div>
+  </nav>
+</header>
+<section class="side-menu" style="display: none"  ng-show="activeUI">
+  <div class="sidebar-nav">
+    <div class="nav-collapse collapse">
+      <ul class="nav top-nav org-nav">
+        <li>
+            <org-menu context="orgmenu"  ></org-menu>
+        </li>
+      </ul>
+    </div>
+    <div class="nav-collapse collapse">
+      <ul class="nav nav-list" menu="sideMenu">
+        <li class="option active">
+          <a href="#!/getting-started/setup"><i class="pictogram">&#128640;</i>Getting Started</a>
+        </li>
+        <li class="option">
+          <a href="#!/app-overview/summary"><i class="pictogram">&#59214;</i>App Overview</a>
+          <ul class="nav nav-list">
+            <li>
+              <a href="#!/app-overview/summary"><i class="pictogram sub">&#128241;</i> Summary</a>
+            </li>
+          </ul>
+        </li>
+
+
+        <li class="option">
+          <a href="#!/users"><i class="pictogram">&#128100;</i>Users</a>
+          <ul class="nav nav-list">
+            <li>
+              <a href="#!/users"><i class="pictogram sub">&#128100;</i>Users</a>
+            </li>
+            <li>
+              <a href="#!/groups"><i class="pictogram sub">&#128101;</i>Groups</a>
+            </li>
+            <li>
+              <a href="#!/roles"><i class="pictogram sub">&#59170;</i>Roles</a>
+            </li>
+          </ul>
+        </li>
+
+        <li class="option" style="display: none;" ng-show="hasMonitoring">
+          <a href="#!/performance/app-usage?timeFilter={{selectedtimefilter.value}}&sessionChartFilter={{selectedChartCriteria.chartCriteriaId}}&currentCompare={{currentCompare}}"><i class="pictogram">&#128711;</i>Monitoring <div class="new-tag">new</div></a>
+          <ul class="nav nav-list">
+            <li><a href="#!/performance/app-usage?timeFilter={{selectedtimefilter.value}}&sessionChartFilter={{selectedChartCriteria.chartCriteriaId}}&currentCompare={{currentCompare}}"><i
+                class="pictogram sub">&#128202;</i>App Usage</a></li>
+            <li><a href="#!/performance/errors-crashes?timeFilter={{selectedtimefilter.value}}&logChartFilter={{selectedChartCriteria.chartCriteriaId}}&currentCompare={{currentCompare}}"><i class="pictogram sub">&#9889;</i>Errors &amp;
+              Crashes</a></li>
+            <li><a href="#!/performance/api-perf?timeFilter={{selectedtimefilter.value}}&networkChartFilter={{selectedChartCriteria.chartCriteriaId}}&currentCompare={{currentCompare}}"><i class="pictogram sub">&#128200;</i>API Performance</a>
+            </li>
+          </ul>
+        </li>
+
+
+        <li class="option">
+          <a href="#!/push/sendNotification"><i class="pictogram">&#59200;</i>Push</a>
+          <ul class="nav nav-list">
+            <li>
+              <a href="#!/push/sendNotification"><i class="pictogram sub">&#128319;</i>Send
+                Notification</a>
+            </li>
+            <li>
+              <a href="#!/push/history"><i class="pictogram sub">&#9991;</i>Message History</a>
+            </li>
+            <li>
+              <a href="#!/push/configuration"><i class="pictogram sub">&#9874;</i>Configuration</a>
+            </li>
+            <li>
+              <a href="#!/push/getStarted"><i class="pictogram sub">&#59176;</i>Getting Started</a>
+            </li>
+          </ul>
+        </li>
+
+
+        <li class="option">
+          <a href="#!/data"><i class="pictogram">&#128248;</i>Data</a>
+          <ul class="nav nav-list">
+            <li>
+              <a href="#!/data"><i class="pictogram sub">&#128254;</i>Collections</a>
+            </li>
+            <!--li>
+              <a href="#!/data/shell"><i class="pictogram sub">&#128254;</i>Shell</a>
+            </li-->
+          </ul>
+        </li>
+
+        <li class="option">
+          <a href="#!/activities"><i class="pictogram ">&#59194;</i> Activities</a>
+        </li>
+
+
+        <li class="option">
+          <a href="#!/configure/default-configs"><i class="pictogram">&#9874;</i>Configure</a>
+          <ul class="nav nav-list">
+            <li><a href="#!/configure/default-configs"><i class="pictogram sub">&#128214;</i>Default
+              Configs</a></li>
+            <li><a href="#!/configure/beta-configs"><i class="pictogram sub">&#59190;</i>Beta Testing Configs</a>
+            </li>
+            <li><a href="#!/configure/ab-configs"><i class="pictogram sub">&#59146;</i>A/B Testing
+              Configs</a></li>
+          </ul>
+        </li>
+        <li class="option">
+          <a href="#!/shell"><i class="pictogram">&#9000;</i>Shell</a>
+        </li>
+
+      </ul>
+    </div>
+  </div>
+</section>
+
+<section class="main-content" style="display: none" ng-show="loaded">
+  <div class="container-fluid">
+    <div class="row-fluid">
+      <div class="span12">
+
+        <!--header app/org context nav-->
+
+        <nav class="navbar secondary" style="display: none"  ng-show="activeUI">
+          <div class="container-fluid">
+            <div class="row-fluid">
+              <div class="span12">
+                <ul class="nav top-nav span3">
+                  <li>
+                    <div class="btn-group">
+                      <a class="btn dropdown-toggle top-selector app-selector" data-toggle="dropdown">
+                        <i class="pictogram">&#9881;</i> {{currentApp}}
+                        <span class="caret"></span>
+                      </a>
+                      <ul class="dropdown-menu">
+                        <li ng-repeat="app in applications">
+                          <a ng-click="appChange(app.name)">{{app.name}}</a>
+                        </li>
+                      </ul>
+                    </div>
+                  </li>
+                </ul>
+                <div class="span9 button-area">
+                  <div class="nav-collapse collapse">
+                    <ul class="helper-links nav span12">
+                      <li class="span4">
+                        <a ng-if="activeUI" class="btn btn-create zero-out" style="{{applicationsSize === 10 ? 'width:290px':''}}" ng-disabled="applicationsSize === 10" ng-click="(applicationsSize < 10 ? showModal('newApplication') : '')"  >
+                            <i class="pictogram">&#8862;</i>
+                            {{applicationsSize === 10 ? 'You have met your 10 app limit' : 'Add New App'}}
+                          </a>
+                      </li>
+                      <li class="sdks span8">
+                        <ul class="pull-right">
+                          <li class="title"><label>SDKs and Modules</label></li>
+                          <li><a target="_blank" href="http://apigee.com/docs/usergrid/content/sdks-and-examples#ios"><i class="sdk-icon-ios"></i></a></li>
+                          <li><a target="_blank" href="http://apigee.com/docs/usergrid/content/sdks-and-examples#android"><i class="sdk-icon-android"></i></a></li>
+                          <li><a target="_blank" href="http://apigee.com/docs/usergrid/content/sdks-and-examples#javascript"><i class="sdk-icon-js"></i></a></li>
+                          <li><a target="_blank" href="http://apigee.com/docs/usergrid/content/sdks-and-examples#nodejs"><i class="sdk-icon-node"></i></a></li>
+                          <li><a target="_blank" href="http://apigee.com/docs/usergrid/content/sdks-and-examples#ruby"><i class="sdk-icon-ruby"></i></a></li>
+                          <li><a target="_blank" href="http://apigee.com/docs/usergrid/content/sdks-and-examples#c"><i class="sdk-icon-net"></i></a></li>
+                        </ul>
+                      </li>
+                    </ul>
+                  </div>
+                </div>
+              </div>
+            </div>
+          </div>
+        </nav>
+        <!--for demo mode-->
+        <div ng-if="showDemoBar" ng-cloak class="demo-holder">
+          <div class="alert alert-demo alert-animate">
+            <div class="toggle">
+              <input type="checkbox" class="check" ng-model="$parent.$parent.demoData">
+              <b class="b switch"></b>
+              <b class="b track"></b>
+            </div>
+
+            <div class="demo-text">
+              <i class="pictogram">{{demoData ? '&#128165;' : '&#59141;'}}</i>You are currently viewing <span class="bold">{{demoData ? 'demo data' : 'live data for your ' + currentApp + ' app'}}</span>.
+            </div>
+
+            <div class="demo-holder-content">DEMO MODE {{demoData ? 'ON' : 'OFF'}}</div>
+          </div>
+        </div>
+        <!--todo - this needs a style applied only when shown ng-class-->
+        <div ng-controller="AlertCtrl" ng-cloak class="alert-holder main-alert">
+          <alerti ng-repeat="alert in alerts" type="alert.type" closeable="true" index="$index" ng-cloak>{{alert.msg}}</alerti>
+        </div>
+
+        <bsmodal id="newApplication"
+                 title="Create New Application"
+                 close="hideModal"
+                 closelabel="Cancel"
+                 extrabutton="newApplicationDialog"
+                 extrabuttonlabel="Create"
+                 ng-cloak>
+          <div  ng-show="hasCreateApplicationError" class="alert-error">Application already exists!</div>
+          <p>New application name: <input ng-model="$parent.newAppName" pattern="{{appNameRegex}}"  title="{{appNameRegexDescription}}" type="text" required  /></p>
+        </bsmodal>
+
+
+
+        <!--Dynamic Content-->
+        <div ng-view class="page-holder"></div>
+
+        <!--<hr/>-->
+        <!--<div ng-controller="DebugCntl">-->
+        <!--Debug info:-->
+        <!--<div>app: v<span app-version></span></div>-->
+        <!--<div>-->
+        <!--<pre>$location.path() = {{$location.path()}}</pre>-->
+        <!--<pre>$route.current.templateUrl = {{$route.current.templateUrl}}</pre>-->
+        <!--<pre>$route.current.params = {{$route.current.params}}</pre>-->
+        <!--<pre>$route.current.scope.name = {{$route.current.scope.name}}</pre>-->
+        <!--<pre>$routeParams = {{$routeParams}}</pre>-->
+        <!--</div>-->
+        <!--</div>-->
+
+        <footer>
+          <hr>
+          <p class="pull-right">&copy; Apigee 2013</p>
+        </footer>
+      </div>
+    </div>
+  </div>
+</section>
+<script src="config.js"></script>
+
+<!-- build:js js/libs/usergrid-libs.min.js -->
+<script src="js/libs/jquery-1.9.1.min.js"></script>
+<script src="js/libs/jquery-migrate-1.1.1.min.js"></script>
+<script src="js/libs/jquery.sparkline.min.js"></script>
+<script src="js/libs/Highcharts-2.3.5/js/highcharts.js"></script>
+<script src="js/libs/angular-1.1.5.js"></script>
+<script src="js/libs/angular-resource-1.1.5.js"></script>
+<script src="js/libs/usergrid.sdk.js"></script>
+<script src="js/libs/MD5.min.js"></script>
+<!-- endbuild -->
+
+<script src="js/libs/jqueryui/date.min.js"></script>
+<script src="js/libs/jqueryui/jquery-ui-1.8.18.min.js"></script>
+<script src="js/libs/jqueryui/jquery.ui.timepicker.min.js"></script>
+
+<!-- build:js js/usergrid.min.js -->
+<script src="js/app.js"></script>
+<script src="js/templates.js"></script>
+<script src="js/services.js"></script>
+<script src="js/filters.js"></script>
+<script src="js/global/alert-controller.js"></script>
+<script src="js/global/alert-directive.js"></script>
+<script src="js/global/app-switcher-directive.js"></script>
+<script src="js/global/page-constants.js"></script>
+<script src="js/global/page-controller.js"></script>
+<script src="js/global/page-service.js"></script>
+<script src="js/global/ug-service.js"></script>
+<script src="js/global/util-directive.js"></script>
+<script src="js/global/utility-service.js"></script>
+<script src="js/configure/checkbox-directive.js"></script>
+<script src="js/configure/configure-controller.js"></script>
+<script src="js/activities/activities-controller.js"></script>
+<script src="js/app-overview/app-overview-controller.js"></script>
+<script src="js/app-overview/getting-started-controller.js"></script>
+<script src="js/charts/chart-controller.js"></script>
+<script src="js/charts/chart-directives.js"></script>
+<script src="js/charts/chart-service.js"></script>
+<script src="js/charts/sparklines.js"></script>
+<script src="js/data/data-controller.js"></script>
+<script src="js/data/entity-controller.js"></script>
+<script src="js/data/shell-controller.js"></script>
+<script src="js/dialogs/balloon-directive.js"></script>
+<script src="js/dialogs/dialog-controller.js"></script>
+<script src="js/dialogs/modal-directive.js"></script>
+<script src="js/groups/groups-activities-controller.js"></script>
+<script src="js/groups/groups-controller.js"></script>
+<script src="js/groups/groups-details-controller.js"></script>
+<script src="js/groups/groups-members-controller.js"></script>
+<script src="js/groups/groups-roles-controller.js"></script>
+<script src="js/login/forgot-password-controller.js"></script>
+<script src="js/login/login-controller.js"></script>
+<script src="js/login/register-controller.js"></script>
+<script src="js/menus/menu-directives.js"></script>
+<script src="js/org-overview/org-overview-controller.js"></script>
+<script src="js/performance/log-directive.js"></script>
+<script src="js/performance/performance-controller.js"></script>
+<script src="js/performance/performance-directives.js"></script>
+<script src="js/performance/rawLog-controller.js"></script>
+<script src="js/performance/rawLog-filter.js"></script>
+<script src="js/profile/account-controller.js"></script>
+<script src="js/profile/organizations-controller.js"></script>
+<script src="js/profile/profile-controller.js"></script>
+<script src="js/push/push-config-controller.js"></script>
+<script src="js/push/push-get-started-controller.js"></script>
+<script src="js/push/push-history-controller.js"></script>
+<script src="js/push/push-receipts-controller.js"></script>
+<script src="js/push/push-send-notification-controller.js"></script>
+<script src="js/push/test-controller.js"></script>
+<script src="js/roles/roles-controller.js"></script>
+<script src="js/roles/roles-groups-controller.js"></script>
+<script src="js/roles/roles-settings-controller.js"></script>
+<script src="js/roles/roles-users-controller.js"></script>
+<script src="js/shell/shell-controller.js"></script>
+<script src="js/users/users-activities-controller.js"></script>
+<script src="js/users/users-controller.js"></script>
+<script src="js/users/users-graph-controller.js"></script>
+<script src="js/users/users-groups-controller.js"></script>
+<script src="js/users/users-profile-controller.js"></script>
+<script src="js/users/users-roles-controller.js"></script>
+<!-- endbuild -->
+
+<script src="js/libs/bootstrap-custom/ui-bootstrap-custom-tpls-0.3.0.min.js"></script>
+
+
+<script type="text/javascript">
+  var _gaq = _gaq || [];
+  _gaq.push(['_setAccount', 'UA-4084158-4']);
+  _gaq.push(['_trackPageview']);
+
+  (function() {
+    var ga = document.createElement('script'); ga.type = 'text/javascript'; ga.async = true;
+    ga.src = ('https:' == document.location.protocol ? 'https://ssl' : 'http://www') + '.google-analytics.com/ga.js';
+    var s = document.getElementsByTagName('script')[0]; s.parentNode.insertBefore(ga, s);
+  })();
+
+</script>
+
+</body>
+</html>
